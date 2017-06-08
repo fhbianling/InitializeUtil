@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.bian.debugbox.box.InitializeUtil;
+import com.bian.debugbox.box.client.BooleanClient;
 import com.bian.debugbox.box.client.IpSettingClient;
 
 /**
@@ -14,21 +15,22 @@ import com.bian.debugbox.box.client.IpSettingClient;
  */
 
 public class TestApplication extends Application {
+    static String sIp="";
     @Override
     public void onCreate() {
         super.onCreate();
         InitializeUtil.init(this, MainActivity.class);
-////        InitializeUtil.addBooleanClient(new BooleanClient() {
-////            @Override
-////            public void onBooleanResult(boolean result) {
-////                Toast.makeText(TestApplication.this, result + "", Toast.LENGTH_SHORT).show();
-////            }
-////
-////            @Override
-////            public String getOptionsName() {
-////                return "简单测试";
-////            }
-////        });
+        InitializeUtil.addBooleanClient(new BooleanClient() {
+            @Override
+            public void onBooleanResult(boolean result) {
+                Toast.makeText(TestApplication.this, result + "", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public String getOptionsName() {
+                return "简单测试";
+            }
+        });
         InitializeUtil.addIpSettingClient(new IpSettingClient() {
             @Override
             public void onIpSelected(String ip) {
@@ -37,6 +39,7 @@ public class TestApplication extends Application {
                 } else {
                     Toast.makeText(TestApplication.this, ip, Toast.LENGTH_LONG).show();
                 }
+                TestApplication.sIp =ip;
             }
         });
         InitializeUtil.setDefaultIp("http://192.168.1.44:8080");

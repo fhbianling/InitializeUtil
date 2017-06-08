@@ -36,5 +36,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_margin="20dp"
-        android:text="进入应用启动页" />
+        android:text="完成" />
 </LinearLayout>

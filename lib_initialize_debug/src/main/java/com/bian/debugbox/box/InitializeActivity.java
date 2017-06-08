@@ -24,15 +24,26 @@ import java.util.List;
  */
 
 public class InitializeActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
-    private final static int REQUEST_TEXTCLIENT = 0X22;
+    private final static int REQUEST_TEXT_CLIENT = 0X22;
     private ListView clientList;
     private ClientAdapter clientAdapter;
     private boolean first = true;
+
+    public static void setExisting(boolean sExisting) {
+        InitializeActivity.sExisting = sExisting;
+        FloatingButton.setVisible(!sExisting);
+    }
+
+    private static boolean sExisting;
 
     public static void start(Context context) {
         Intent starter = new Intent(context.getApplicationContext(), InitializeActivity.class);
         starter.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(starter);
+    }
+
+    public static boolean isExisting() {
+        return sExisting;
     }
 
     @Override
@@ -42,6 +53,7 @@ public class InitializeActivity extends BaseActivity implements View.OnClickList
         permissionCheck();
         findView();
         initClientList();
+        setExisting(true);
     }
 
     @Override
@@ -60,7 +72,7 @@ public class InitializeActivity extends BaseActivity implements View.OnClickList
             if (code != PermissionChecker.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -89,7 +101,7 @@ public class InitializeActivity extends BaseActivity implements View.OnClickList
         if (item instanceof IpSettingClientWrap) {
             IPSettingActivity.start(this);
         } else {
-            TextClientActivity.start(REQUEST_TEXTCLIENT, this, item);
+            TextClientActivity.start(REQUEST_TEXT_CLIENT, this, item);
         }
     }
 
@@ -152,4 +164,9 @@ public class InitializeActivity extends BaseActivity implements View.OnClickList
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        setExisting(false);
+    }
 }

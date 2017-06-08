@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Initialize.iml" filepath="$PROJECT_DIR$/Initialize.iml" />
+      <module fileurl="file://$PROJECT_DIR$/InitializeUtil.iml" filepath="$PROJECT_DIR$/InitializeUtil.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/lib_initialize_debug/lib_initialize_debug.iml" filepath="$PROJECT_DIR$/lib_initialize_debug/lib_initialize_debug.iml" />
       <module fileurl="file://$PROJECT_DIR$/lib_initialize_release/lib_initialize_release.iml" filepath="$PROJECT_DIR$/lib_initialize_release/lib_initialize_release.iml" />

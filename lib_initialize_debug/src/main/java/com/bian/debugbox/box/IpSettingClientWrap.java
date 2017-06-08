@@ -31,8 +31,8 @@ class IpSettingClientWrap extends IpSettingClient implements OptionsClientWrap<S
 
     @Override
     public String getCurrentValue() {
-        //空实现即可
-        return null;
+        IPDbManager.IPEntity ipEntity = IPDbManager.getInstance(context).querySelected();
+        return ipEntity==null?"":ipEntity.getIp();
     }
 
     @Override

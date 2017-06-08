@@ -4,7 +4,9 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
-import android.os.Bundle;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 import android.text.TextUtils;
@@ -22,20 +24,22 @@ import com.bian.debugbox.box.client.StringClient;
  * desc ${TODO}
  */
 
+@SuppressWarnings("unused")
 public class InitializeUtil {
-    public final static String CONFIG_NAME = "initialize";
-    private static String LOG_TAG = "InitializeUtil";
+    final static String CONFIG_NAME = "initialize";
+    final static String LOG_TAG = "InitializeUtil";
     @SuppressLint("StaticFieldLeak")
     private static Application application;
     private static Class<?> startActivity;
     private static boolean debug = true;
     private static boolean inflated = false;
+    private final static int REQUEST_CODE = 0x12;
 
     public static void init(Application application, Class<?> launcherActivity) {
         InitializeUtil.application = application;
         InitializeUtil.startActivity = launcherActivity;
         checkAppNull();
-        ActivityLifeCycleCallBackImpl activityLifeCycleCallBackImpl = new ActivityLifeCycleCallBackImpl();
+        ActivityLifeCycle activityLifeCycleCallBackImpl = new ActivityLifeCycle();
         Log.i(LOG_TAG, "init");
         application.registerActivityLifecycleCallbacks(activityLifeCycleCallBackImpl);
         SharedPrefUtil.init(application);
@@ -47,6 +51,7 @@ public class InitializeUtil {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static void setDefaultIp(String host, String port) {
         checkAppNull();
         IPDbManager.getInstance(application.getApplicationContext()).setDefaultIp(host, port);
@@ -93,53 +98,41 @@ public class InitializeUtil {
         OptionsClientManager.addBooleanClient(booleanClient);
     }
 
-    private static void inflateFloatingButton(Activity activity) {
-        Log.i(LOG_TAG, "inflate FloatingButton");
-        inflated = true;
-        boolean permissionGranted = PermissionChecker.checkSelfPermission(activity, Manifest.permission.SYSTEM_ALERT_WINDOW)
-                == PermissionChecker.PERMISSION_GRANTED;
-        if (permissionGranted) {
-            FloatingButton.inflateButton(activity);
+    private static void checkPermissionAndInflate(Activity activity) {
+        if (Build.VERSION.SDK_INT < 18) {
+            boolean permissionGranted = PermissionChecker.checkSelfPermission(activity, Manifest.permission.SYSTEM_ALERT_WINDOW)
+                    == PermissionChecker.PERMISSION_GRANTED;
+            if (permissionGranted) {
+                inflateButton(activity);
+            } else {
+                Log.e(LOG_TAG, "Permissions denied");
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, REQUEST_CODE);
+            }
         } else {
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, 0x12);
+            inflateButton(activity);
         }
     }
 
-    private static class ActivityLifeCycleCallBackImpl implements Application.ActivityLifecycleCallbacks {
-        @Override
-        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-            String simpleName = activity.getClass().getSimpleName();
-            Log.i(LOG_TAG, "onActivityCreated:" + simpleName);
-            if (inflated) return;
-            boolean shouldInflateUtil = TextUtils.equals(simpleName, startActivity.getSimpleName()) && debug;
-            if (shouldInflateUtil) {
-                inflateFloatingButton(activity);
-            }
+    private static void inflateButton(Context context) {
+        Log.i(LOG_TAG, "inflateButton FloatingButton");
+        inflated = true;
+        FloatingButton.inflateButton(context);
+    }
+
+    public static void onPermissionResult(int requestCode, int resultCode, Intent data) {
+        checkAppNull();
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
+            inflateButton(application);
         }
+    }
 
-
-        @Override
-        public void onActivityStarted(Activity activity) {
-        }
-
-        @Override
-        public void onActivityResumed(Activity activity) {
-        }
-
-        @Override
-        public void onActivityPaused(Activity activity) {
-        }
-
-        @Override
-        public void onActivityStopped(Activity activity) {
-        }
-
-        @Override
-        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-        }
-
-        @Override
-        public void onActivityDestroyed(Activity activity) {
+    static void inflatedButtonProcess(Activity activity) {
+        String simpleName = activity.getClass().getSimpleName();
+        Log.i(LOG_TAG, "onActivityCreated:" + simpleName);
+        if (inflated) return;
+        boolean shouldInflateUtil = TextUtils.equals(simpleName, startActivity.getSimpleName()) && debug;
+        if (shouldInflateUtil) {
+            checkPermissionAndInflate(activity);
         }
     }
 }

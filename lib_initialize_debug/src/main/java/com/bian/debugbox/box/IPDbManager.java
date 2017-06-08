@@ -12,6 +12,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bian.debugbox.box.InitializeUtil.LOG_TAG;
+
 /**
  * author 边凌
  * date 2017/4/1 14:31
@@ -24,7 +26,6 @@ class IPDbManager {
     private final static String COLUMN_PORT = "port";
     private final static String COLUMN_SELECTED = "selected";
     private final static String COLUMN_CREATED_DATE = "createDate";
-    private final static String LOG_TAG = "InitializeUtil";
     private static IPDbManager sInstance;
     private IPDbHelper ipDbHelper;
 
