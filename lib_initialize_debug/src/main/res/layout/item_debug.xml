@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/item_debug_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:gravity="start|center_vertical"
+        android:textColor="#333333"
+        android:textSize="17sp"
+        tools:text="设置：IP设置" />
+
+    <TextView
+        android:id="@+id/item_debug_tv2"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:ellipsize="marquee"
+        android:gravity="center_vertical"
+        android:maxLength="30"
+        android:layout_marginBottom="10dp"
+        android:singleLine="true"
+        tools:ignore="RtlHardcoded"
+        tools:text="当前选中：13123123" />
+</LinearLayout>

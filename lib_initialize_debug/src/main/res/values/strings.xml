@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">初始化设置</string>
+    <string name="hint_itemip_1">删除</string>
+    <string name="hint">Init</string>
+</resources>
