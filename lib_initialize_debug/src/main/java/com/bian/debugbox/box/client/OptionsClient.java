@@ -6,8 +6,7 @@ package com.bian.debugbox.box.client;
  * desc ${TODO}
  */
 
-public interface OptionsClient<T> {
+public interface OptionsClient {
     String getOptionsName();
-    T getCurrentValue();
 }
 
