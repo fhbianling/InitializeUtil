@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
@@ -28,16 +27,15 @@ import com.bian.debugbox.box.client.StringClient;
 public class InitializeUtil {
     final static String CONFIG_NAME = "initialize";
     final static String LOG_TAG = "InitializeUtil";
+    private final static int REQUEST_CODE = 0x12;
     @SuppressLint("StaticFieldLeak")
     private static Application application;
-    private static Class<?> startActivity;
+    //    private static Class<?> startActivity;
     private static boolean debug = true;
     private static boolean inflated = false;
-    private final static int REQUEST_CODE = 0x12;
 
-    public static void init(Application application, Class<?> launcherActivity) {
+    public static void init(Application application) {
         InitializeUtil.application = application;
-        InitializeUtil.startActivity = launcherActivity;
         checkAppNull();
         ActivityLifeCycle activityLifeCycleCallBackImpl = new ActivityLifeCycle();
         Log.i(LOG_TAG, "init");
@@ -118,7 +116,7 @@ public class InitializeUtil {
         FloatingButton.inflateButton(context);
     }
 
-    public static void onPermissionResult(int requestCode, int resultCode, Intent data) {
+    public static void onPermissionResult(int requestCode, int resultCode) {
         checkAppNull();
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             inflateButton(application);
@@ -128,10 +126,7 @@ public class InitializeUtil {
     static void inflatedButtonProcess(Activity activity) {
         String simpleName = activity.getClass().getSimpleName();
         Log.i(LOG_TAG, "onActivityCreated:" + simpleName);
-        if (inflated) return;
-        boolean shouldInflateUtil = TextUtils.equals(simpleName, startActivity.getSimpleName()) && debug;
-        if (shouldInflateUtil) {
-            checkPermissionAndInflate(activity);
-        }
+        if (inflated || !debug) return;
+        checkPermissionAndInflate(activity);
     }
 }
