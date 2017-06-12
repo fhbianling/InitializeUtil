@@ -114,7 +114,6 @@ public class InitializeUtil {
     }
 
     private static void inflateButton(Context context) {
-        Log.i(LOG_TAG, "inflateButton FloatingButton");
         inflated = true;
         FloatingButton.inflateButton(context);
     }
