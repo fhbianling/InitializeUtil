@@ -1,6 +1,7 @@
 package com.bian.debugbox.box;
 
 import android.app.Application;
+import android.content.Intent;
 
 import com.bian.debugbox.box.client.BooleanClient;
 import com.bian.debugbox.box.client.FloatClient;
@@ -16,7 +17,7 @@ import com.bian.debugbox.box.client.StringClient;
 
 public class InitializeUtil {
 
-    public static void init(Application application, Class<?> launcherActivity) {
+    public static void init(Application application) {
     }
 
     public static void setDefaultIp(String host,String port){
@@ -41,5 +42,8 @@ public class InitializeUtil {
     }
 
     public static void addBooleanClient(BooleanClient booleanClient){
+    }
+
+    public static void onPermissionResult(int requestCode, int resultCode) {
     }
 }

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import com.bian.debugbox.box.client.OptionsClient;
 
 import java.util.List;
 
+import static com.bian.debugbox.box.InitializeUtil.LOG_TAG;
+
 /**
  * author 边凌
  * date 2017/3/28 15:40
@@ -38,6 +41,7 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
 
     public static void setExisting(boolean sExisting) {
         InitializeHomeActivity.sExisting = sExisting;
+        Log.d(LOG_TAG,"setExisting:"+sExisting);
         FloatingButton.setVisible(!sExisting);
     }
 
@@ -63,6 +67,7 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
         permissionCheck();
         findView();
         initClientList();
+        Log.d(LOG_TAG,"onCreate");
         setExisting(true);
     }
 
@@ -191,6 +196,7 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(LOG_TAG,"onDestroy");
         setExisting(false);
     }
 }

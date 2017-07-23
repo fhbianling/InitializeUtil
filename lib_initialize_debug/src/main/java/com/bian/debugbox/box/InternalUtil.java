@@ -1,5 +1,9 @@
 package com.bian.debugbox.box;
 
+import android.content.Context;
+import android.graphics.Point;
+import android.view.WindowManager;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -28,4 +32,21 @@ class InternalUtil {
         }
         return "";
     }
+
+    static int getStatusBarHeight(Context context) {
+        int statusBarHeight = 0;
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
+    }
+
+    static int getScreenWidth(Context context){
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Point point=new Point();
+        wm.getDefaultDisplay().getSize(point);
+        return point.x;
+    }
+
 }

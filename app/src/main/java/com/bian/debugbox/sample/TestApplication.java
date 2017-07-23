@@ -19,7 +19,7 @@ public class TestApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        InitializeUtil.init(this, MainActivity.class);
+        InitializeUtil.init(this);
         InitializeUtil.addBooleanClient(new BooleanClient() {
 
             @Override

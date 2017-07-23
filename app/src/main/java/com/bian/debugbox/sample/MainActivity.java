@@ -1,9 +1,8 @@
 package com.bian.debugbox.sample;
 
 import android.content.Intent;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -25,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        InitializeUtil.onPermissionResult(requestCode,resultCode,data);
+        InitializeUtil.onPermissionResult(requestCode,resultCode);
     }
 
     @Override
