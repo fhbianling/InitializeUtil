@@ -8,6 +8,6 @@ package com.bian.debugbox.box.client;
 
 public interface OptionsClient<T> {
     String getOptionsName();
-    T getCurrentValue();
+    void onResult(T result);
 }
 

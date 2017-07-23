@@ -16,7 +16,10 @@ import com.bian.debugbox.box.client.BooleanClient;
 import com.bian.debugbox.box.client.FloatClient;
 import com.bian.debugbox.box.client.IpSettingClient;
 import com.bian.debugbox.box.client.NumberClient;
+import com.bian.debugbox.box.client.OptionsClient;
 import com.bian.debugbox.box.client.StringClient;
+
+import static android.R.attr.host;
 
 /**
  * author 边凌
@@ -42,29 +45,22 @@ public class InitializeUtil {
         ActivityLifeCycle activityLifeCycleCallBackImpl = new ActivityLifeCycle();
         Log.i(LOG_TAG, "init");
         application.registerActivityLifecycleCallbacks(activityLifeCycleCallBackImpl);
-        SharedPrefUtil.init(application);
-    }
-
-    private static void checkAppNull() {
-        if (application == null) {
-            throw new UnsupportedOperationException("init failed:" + "didn't call InitializeUtil.init(...) method");
-        }
     }
 
     @SuppressWarnings("WeakerAccess")
-    public static void setDefaultIp(String host, String port) {
+    public static void setDefaultIp(String clientName, String host, String port) {
         checkAppNull();
-        IPDbManager.getInstance(application.getApplicationContext()).setDefaultIp(host, port);
+        IPDbManager.getInstance(application.getApplicationContext()).setDefaultIp(clientName, host, port);
     }
 
-    public static void setDefaultIp(String url) {
+    public static void setDefaultIp(String clientName, String url) {
         checkAppNull();
         String host = InternalUtil.getHostFromUrl(url);
         String port = InternalUtil.getPortFromUrl(url);
         if (TextUtils.isEmpty(host) || TextUtils.isEmpty(port)) {
             Log.e(LOG_TAG, "setDefaultIp(String url):parse url error");
         } else {
-            setDefaultIp(host, port);
+            setDefaultIp(clientName, host, port);
         }
     }
 
@@ -74,28 +70,34 @@ public class InitializeUtil {
     }
 
     public static void addIpSettingClient(IpSettingClient ipSettingClient) {
-        checkAppNull();
-        OptionsClientManager.addIpSettingClient(application.getApplicationContext(), ipSettingClient);
+        addClient(ipSettingClient);
     }
 
     public static void addStringClient(StringClient stringClient) {
-        checkAppNull();
-        OptionsClientManager.addStringClient(stringClient);
+        addClient(stringClient);
     }
 
     public static void addNumberClient(NumberClient numberClient) {
-        checkAppNull();
-        OptionsClientManager.addNumberClient(numberClient);
+        addClient(numberClient);
     }
 
     public static void addFloatClient(FloatClient floatClient) {
-        checkAppNull();
-        OptionsClientManager.addFloatClient(floatClient);
+        addClient(floatClient);
     }
 
     public static void addBooleanClient(BooleanClient booleanClient) {
+        addClient(booleanClient);
+    }
+
+    private static void checkAppNull() {
+        if (application == null) {
+            throw new UnsupportedOperationException("init failed:" + "didn't call InitializeUtil.init(...) method");
+        }
+    }
+
+    private static void addClient(OptionsClient client) {
         checkAppNull();
-        OptionsClientManager.addBooleanClient(booleanClient);
+        OptionsClientManager.addClient(client);
     }
 
     private static void checkPermissionAndInflate(Activity activity) {

@@ -1,13 +1,17 @@
 package com.bian.debugbox.box;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -16,6 +20,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bian.debugbox.box.client.OptionsClient;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -26,7 +32,8 @@ import java.util.regex.Pattern;
  * date 2017/3/28 16:23
  * desc ${IP设置Activity}
  */
-public class IPSettingActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class IPSettingActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
+    private static final String KEY_CLIENT = "clilent";
     private TextView currentIp;
     private ListView ipList;
     private int[] etIds = new int[]{
@@ -40,18 +47,28 @@ public class IPSettingActivity extends BaseActivity implements View.OnClickListe
 
     private TextView addConfirm;
     private IPAdapter ipAdapter;
+    private String clientName;
     private Pattern pattern = Pattern.compile("((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)");
 
-    public static void start(Context context) {
+    public static void start(Context context, OptionsClient item) {
         Intent starter = new Intent(context, IPSettingActivity.class);
+        starter.putExtra(KEY_CLIENT,item.getOptionsName());
         context.startActivity(starter);
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initSetting();
         setContentView(R.layout.activity_ipsetting);
+        clientName =getIntent().getStringExtra(KEY_CLIENT);
         findView();
+    }
+
+    private void initSetting() {
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     private void findView() {
@@ -104,7 +121,7 @@ public class IPSettingActivity extends BaseActivity implements View.OnClickListe
         }
 
         ipAdapter.clearSelect();
-        IPDbManager.getInstance(this).insertIP(host, port);
+        IPDbManager.getInstance(this).insertIP(clientName,host, port);
         ipAdapter.refresh(this);
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         if (imm.isActive()) {
@@ -124,8 +141,12 @@ public class IPSettingActivity extends BaseActivity implements View.OnClickListe
     }
 
     public void selectedIp(String ip) {
-        OptionsClientManager.getIpSettingClient().onIpSelected(ip);
+        getClient().onResult(ip);
         currentIp.setText(String.format("当前选中IP：%s", ip));
+    }
+
+    private OptionsClient getClient() {
+        return OptionsClientManager.getOptionsClient(getIntent().getStringExtra(KEY_CLIENT));
     }
 
     public boolean checkIp(String host) {
@@ -146,7 +167,7 @@ public class IPSettingActivity extends BaseActivity implements View.OnClickListe
 
         IPAdapter(Context context) {
             inflater = LayoutInflater.from(context);
-            ipEntities = IPDbManager.getInstance(context).queryListAll();
+            ipEntities = IPDbManager.getInstance(context).queryListAll(clientName);
             this.context = context;
         }
 
@@ -188,7 +209,7 @@ public class IPSettingActivity extends BaseActivity implements View.OnClickListe
         }
 
         void refresh(Context context) {
-            ipEntities = IPDbManager.getInstance(context).queryListAll();
+            ipEntities = IPDbManager.getInstance(context).queryListAll(clientName);
             notifyDataSetChanged();
         }
 

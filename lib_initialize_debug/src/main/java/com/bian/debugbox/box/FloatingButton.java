@@ -73,8 +73,8 @@ class FloatingButton {
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (InitializeActivity.isExisting()) return;
-                InitializeActivity.start(context);
+                if (InitializeHomeActivity.isExisting()) return;
+                InitializeHomeActivity.start(context);
             }
         });
     }
@@ -128,7 +128,6 @@ class FloatingButton {
     }
 
     private void updateWindowPosition(int x, int y) {
-        Log.i(LOG_TAG, "updateWindowPosition:(" + x + "," + y + ")");
         WindowManager.LayoutParams layoutParams = getLayoutParams();
         layoutParams.x = x;
         layoutParams.y = y;

@@ -6,6 +6,5 @@ package com.bian.debugbox.box.client;
  * desc ${TODO}
  */
 
-public interface StringClient extends OptionsClient {
-    void onStringSetResult(String result);
+public interface StringClient extends OptionsClient<String> {
 }

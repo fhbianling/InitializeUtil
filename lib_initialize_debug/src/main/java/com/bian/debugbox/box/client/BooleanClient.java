@@ -6,6 +6,5 @@ package com.bian.debugbox.box.client;
  * desc ${TODO}
  */
 
-public interface BooleanClient extends OptionsClient {
-    void onBooleanResult(boolean result);
+public interface BooleanClient extends OptionsClient<Boolean> {
 }

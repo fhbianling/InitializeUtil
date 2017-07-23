@@ -6,6 +6,5 @@ package com.bian.debugbox.box.client;
  * desc ${TODO}
  */
 
-public interface NumberClient extends OptionsClient {
-    void onNumberResult(long number);
+public interface NumberClient extends OptionsClient<Long> {
 }

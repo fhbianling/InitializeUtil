@@ -8,9 +8,8 @@ import java.net.URL;
  * date 2017/5/22 11:04
  * desc ${TODO}
  */
-
 class InternalUtil {
-    public static String getHostFromUrl(String url) {
+    static String getHostFromUrl(String url) {
         try {
             URL url1 = new URL(url);
             return url1.getHost();
@@ -20,7 +19,7 @@ class InternalUtil {
         return "";
     }
 
-    public static String getPortFromUrl(String url) {
+    static String getPortFromUrl(String url) {
         try {
             URL url1 = new URL(url);
             return String.valueOf(url1.getPort());

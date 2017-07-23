@@ -6,11 +6,5 @@ package com.bian.debugbox.box.client;
  * desc ${Ip设置}
  */
 
-public abstract class IpSettingClient implements OptionsClient {
-    @Override
-    public String getOptionsName() {
-        return "IP";
-    }
-
-    public abstract void onIpSelected(String ip);
+public interface IpSettingClient extends OptionsClient<String> {
 }

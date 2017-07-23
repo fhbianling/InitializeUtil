@@ -1,8 +1,10 @@
 package com.bian.debugbox.box;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -10,10 +12,15 @@ import android.support.v4.content.PermissionChecker;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.bian.debugbox.box.client.IpSettingClient;
+import com.bian.debugbox.box.client.OptionsClient;
 
 import java.util.List;
 
@@ -23,21 +30,21 @@ import java.util.List;
  * desc ${TODO}
  */
 
-public class InitializeActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class InitializeHomeActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
     private final static int REQUEST_TEXT_CLIENT = 0X22;
     private ListView clientList;
     private ClientAdapter clientAdapter;
     private boolean first = true;
 
     public static void setExisting(boolean sExisting) {
-        InitializeActivity.sExisting = sExisting;
+        InitializeHomeActivity.sExisting = sExisting;
         FloatingButton.setVisible(!sExisting);
     }
 
     private static boolean sExisting;
 
     public static void start(Context context) {
-        Intent starter = new Intent(context.getApplicationContext(), InitializeActivity.class);
+        Intent starter = new Intent(context.getApplicationContext(), InitializeHomeActivity.class);
         starter.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(starter);
     }
@@ -49,6 +56,9 @@ public class InitializeActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_debug);
         permissionCheck();
         findView();
@@ -97,21 +107,23 @@ public class InitializeActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        OptionsClientWrap item = clientAdapter.getItem(position);
-        if (item instanceof IpSettingClientWrap) {
-            IPSettingActivity.start(this);
+        OptionsClient item = clientAdapter.getItem(position);
+        if (item instanceof IpSettingClient) {
+            IPSettingActivity.start(this,item);
         } else {
             TextClientActivity.start(REQUEST_TEXT_CLIENT, this, item);
         }
     }
 
     private static class ClientAdapter extends BaseAdapter {
-        private List<OptionsClientWrap> clients = OptionsClientManager.getClients();
+        private SharedPrefUtil sharedPrefUtil;
+        private List<OptionsClient> clients = OptionsClientManager.getClients();
 
         private Context context;
 
         ClientAdapter(Context context) {
             this.context = context;
+            sharedPrefUtil = SharedPrefUtil.getInstance(context);
         }
 
         private void reload() {
@@ -125,7 +137,7 @@ public class InitializeActivity extends BaseActivity implements View.OnClickList
         }
 
         @Override
-        public OptionsClientWrap getItem(int position) {
+        public OptionsClient getItem(int position) {
             return clients.get(position);
         }
 
@@ -144,12 +156,24 @@ public class InitializeActivity extends BaseActivity implements View.OnClickList
             } else {
                 clientHolder = (ClientHolder) convertView.getTag();
             }
-            OptionsClientWrap item = getItem(position);
+            OptionsClient item = getItem(position);
             if (item != null) {
-                clientHolder.debugOptionsName.setText(String.format("设置：%s", item.getOptionsName()));
-                clientHolder.debugStates.setText(item.getCurrentState());
+                setCurrentValue(clientHolder, item);
             }
             return convertView;
+        }
+
+        private void setCurrentValue(ClientHolder clientHolder, OptionsClient item) {
+            clientHolder.debugOptionsName.setText(String.format("设置：%s", item.getOptionsName()));
+
+            if (!(item instanceof IpSettingClient)) {
+                clientHolder.debugStates.setText(
+                        String.format("当前值：%s", sharedPrefUtil.getString(item)));
+            } else {
+                IPDbManager.IPEntity ipEntity = IPDbManager.getInstance(context).querySelected(item.getOptionsName());
+                clientHolder.debugStates.setText(
+                        String.format("当前值：%s", ipEntity != null ? ipEntity.getIp() : ""));
+            }
         }
 
         private class ClientHolder {

@@ -6,6 +6,5 @@ package com.bian.debugbox.box.client;
  * desc ${TODO}
  */
 
-public interface FloatClient extends OptionsClient {
-    void onFloatResult(float result);
+public interface FloatClient extends OptionsClient<Float> {
 }

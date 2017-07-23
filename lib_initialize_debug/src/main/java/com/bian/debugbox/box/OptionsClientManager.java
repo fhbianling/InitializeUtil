@@ -1,17 +1,14 @@
 package com.bian.debugbox.box;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
-import com.bian.debugbox.box.client.BooleanClient;
-import com.bian.debugbox.box.client.FloatClient;
-import com.bian.debugbox.box.client.IpSettingClient;
-import com.bian.debugbox.box.client.NumberClient;
 import com.bian.debugbox.box.client.OptionsClient;
-import com.bian.debugbox.box.client.StringClient;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * author 边凌
@@ -19,60 +16,30 @@ import java.util.List;
  * desc ${TODO}
  */
 class OptionsClientManager {
-    private static final List<OptionsClientWrap> clients = new ArrayList<>();
-    private static IpSettingClient ipSettingClient;
+    private static final LinkedHashMap<String,OptionsClient> clients = new LinkedHashMap<>();
 
-    static List<OptionsClientWrap> getClients() {
-        return clients;
+    static List<OptionsClient> getClients() {
+        List<OptionsClient> list=new ArrayList<>();
+        for (Map.Entry<String, OptionsClient> entry : clients.entrySet()) {
+            list.add(entry.getValue());
+        }
+        return list;
     }
 
-    static void addIpSettingClient(Context context, IpSettingClient ipSettingClient) {
-        OptionsClientManager.ipSettingClient = ipSettingClient;
-        clients.add(new IpSettingClientWrap(ipSettingClient, context));
-    }
-
-    static IpSettingClient getIpSettingClient() {
-        return ipSettingClient;
-    }
-
-    static void addStringClient(StringClient stringClient) {
-        if (checkRepeat(stringClient)) return;
-        clients.add(new StringClientWrap(stringClient));
+    static void addClient(OptionsClient optionsClient){
+        logRepeat(optionsClient);
+        clients.put(optionsClient.getOptionsName(),optionsClient);
     }
 
     static
     @Nullable
-    OptionsClientWrap getOptionsClientWrap(String optionsName) {
-        for (OptionsClientWrap client : clients) {
-            if (client.getOptionsName().equals(optionsName)) {
-                return client;
-            }
+    OptionsClient getOptionsClient(String optionsName) {
+        return clients.get(optionsName);
+    }
+
+    private static void logRepeat(OptionsClient optionsClient) {
+        if (clients.containsKey(optionsClient.getOptionsName())){
+            Log.e(InitializeUtil.LOG_TAG,"重复添加的统一设置项将只以最后一项为准");
         }
-        return null;
-    }
-
-    static void addNumberClient(NumberClient numberClient) {
-        if (checkRepeat(numberClient)) return;
-        clients.add(new NumberClientWrap(numberClient));
-    }
-
-    static void addFloatClient(FloatClient floatClient) {
-        if (checkRepeat(floatClient)) return;
-        clients.add(new FloatClientWrap(floatClient));
-    }
-
-    static void addBooleanClient(BooleanClient booleanClient) {
-        if (checkRepeat(booleanClient)) return;
-        clients.add(new BooleanClientWrap(booleanClient));
-    }
-
-
-    private static boolean checkRepeat(OptionsClient optionsClient) {
-        for (OptionsClientWrap client : clients) {
-            if (client.getOptionsName().equals(optionsClient.getOptionsName())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

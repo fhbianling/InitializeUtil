@@ -10,7 +10,7 @@
         android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true">
-        <activity android:name=".InitializeActivity"/>
+        <activity android:name=".InitializeHomeActivity"/>
         <activity android:name=".IPSettingActivity" />
         <activity android:name=".TextClientActivity" />
     </application>

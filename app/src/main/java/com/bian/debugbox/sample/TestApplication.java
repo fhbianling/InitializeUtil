@@ -21,27 +21,34 @@ public class TestApplication extends Application {
         super.onCreate();
         InitializeUtil.init(this, MainActivity.class);
         InitializeUtil.addBooleanClient(new BooleanClient() {
-            @Override
-            public void onBooleanResult(boolean result) {
-                Toast.makeText(TestApplication.this, result + "", Toast.LENGTH_SHORT).show();
-            }
 
             @Override
             public String getOptionsName() {
-                return "简单测试";
+                return "布尔测试";
+            }
+
+            @Override
+            public void onResult(Boolean result) {
+                Toast.makeText(TestApplication.this, result + "", Toast.LENGTH_SHORT).show();
             }
         });
         InitializeUtil.addIpSettingClient(new IpSettingClient() {
             @Override
-            public void onIpSelected(String ip) {
-                if (TextUtils.isEmpty(ip)) {
+            public String getOptionsName() {
+                return "IP设置";
+            }
+
+            @Override
+            public void onResult(String result) {
+                if (TextUtils.isEmpty(result)) {
                     Toast.makeText(TestApplication.this, "Ip为空的回调", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(TestApplication.this, ip, Toast.LENGTH_LONG).show();
+                    Toast.makeText(TestApplication.this, result, Toast.LENGTH_LONG).show();
                 }
-                TestApplication.sIp =ip;
+                TestApplication.sIp =result;
             }
+
         });
-        InitializeUtil.setDefaultIp("http://192.168.1.44:8080");
+        InitializeUtil.setDefaultIp("IP设置","http://192.168.1.44:8080");
     }
 }
