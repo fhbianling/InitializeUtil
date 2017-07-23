@@ -41,7 +41,7 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
 
     public static void setExisting(boolean sExisting) {
         InitializeHomeActivity.sExisting = sExisting;
-        Log.d(LOG_TAG,"setExisting:"+sExisting);
+        Log.d(LOG_TAG, "setExisting:" + sExisting);
         FloatingButton.setVisible(!sExisting);
     }
 
@@ -60,15 +60,18 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        initWindowSetting();
         setContentView(R.layout.activity_debug);
         permissionCheck();
         findView();
         initClientList();
-        Log.d(LOG_TAG,"onCreate");
+        Log.d(LOG_TAG, "onCreate");
         setExisting(true);
+    }
+
+    private void initWindowSetting() {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     @Override
@@ -114,7 +117,7 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         OptionsClient item = clientAdapter.getItem(position);
         if (item instanceof IpSettingClient) {
-            IPSettingActivity.start(this,item);
+            IPSettingActivity.start(this, item);
         } else {
             TextClientActivity.start(REQUEST_TEXT_CLIENT, this, item);
         }
@@ -196,7 +199,7 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(LOG_TAG,"onDestroy");
+        Log.d(LOG_TAG, "onDestroy");
         setExisting(false);
     }
 }

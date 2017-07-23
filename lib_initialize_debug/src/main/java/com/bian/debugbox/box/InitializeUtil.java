@@ -5,11 +5,15 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.bian.debugbox.box.client.BooleanClient;
 import com.bian.debugbox.box.client.FloatClient;
@@ -17,8 +21,6 @@ import com.bian.debugbox.box.client.IpSettingClient;
 import com.bian.debugbox.box.client.NumberClient;
 import com.bian.debugbox.box.client.OptionsClient;
 import com.bian.debugbox.box.client.StringClient;
-
-import static android.R.attr.host;
 
 /**
  * author 边凌
@@ -33,7 +35,6 @@ public class InitializeUtil {
     private final static int REQUEST_CODE = 0x12;
     @SuppressLint("StaticFieldLeak")
     private static Application application;
-    //    private static Class<?> startActivity;
     private static boolean debug = true;
     private static boolean inflated = false;
 
@@ -99,29 +100,53 @@ public class InitializeUtil {
     }
 
     private static void checkPermissionAndInflate(Activity activity) {
-        if (Build.VERSION.SDK_INT < 18) {
-            boolean permissionGranted = PermissionChecker.checkSelfPermission(activity, Manifest.permission.SYSTEM_ALERT_WINDOW)
-                    == PermissionChecker.PERMISSION_GRANTED;
-            if (permissionGranted) {
-                inflateButton(activity);
-            } else {
-                Log.e(LOG_TAG, "Permissions denied");
-                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, REQUEST_CODE);
-            }
-        } else {
+        Log.d(LOG_TAG, "在" + activity.getClass().getName() + "检查悬浮窗权限");
+
+        boolean hasPermission = isPermissionGranted(activity);
+        Log.d(LOG_TAG,"悬浮窗权限检查结果："+hasPermission);
+        if (hasPermission) {
             inflateButton(activity);
+        } else {
+            requestPermission(activity);
         }
     }
 
+    private static void requestPermission(Activity activity) {
+        Log.d(LOG_TAG,"申请悬浮窗权限");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Toast.makeText(activity, "使用初始化弹窗需要悬浮窗权限，请开启", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + activity.getPackageName()));
+            activity.startActivityForResult(intent, REQUEST_CODE);
+        } else {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, REQUEST_CODE);
+        }
+    }
+
+    private static boolean isPermissionGranted(Activity activity) {
+        if (Build.VERSION.SDK_INT > 18 && Build.VERSION.SDK_INT < 25) return true;
+        boolean hasPermission;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            hasPermission = Settings.canDrawOverlays(activity);
+        } else {
+            int permission = PermissionChecker.
+                    checkSelfPermission(activity, Manifest.permission.SYSTEM_ALERT_WINDOW);
+            hasPermission = permission
+                    == PermissionChecker.PERMISSION_GRANTED;
+        }
+        return hasPermission;
+    }
+
     private static void inflateButton(Context context) {
+        Log.d(LOG_TAG,"加载悬浮窗");
         inflated = true;
         FloatingButton.inflateButton(context);
     }
 
-    public static void onPermissionResult(int requestCode, int resultCode) {
+    public static void onPermissionResult(Activity activity) {
         checkAppNull();
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
-            inflateButton(application);
+        if (isPermissionGranted(activity)){
+            inflateButton(activity);
         }
     }
 

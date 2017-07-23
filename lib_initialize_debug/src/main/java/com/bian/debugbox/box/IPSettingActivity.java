@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -45,7 +44,6 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
     };
     private EditText[] editTexts = new EditText[etIds.length];
 
-    private TextView addConfirm;
     private IPAdapter ipAdapter;
     private String clientName;
     private Pattern pattern = Pattern.compile("((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)");
@@ -66,9 +64,8 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
     }
 
     private void initSetting() {
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     private void findView() {
@@ -77,7 +74,7 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
         ipAdapter = new IPAdapter(this);
         ipList.setAdapter(ipAdapter);
         ipList.setOnItemClickListener(this);
-        addConfirm = (TextView) findViewById(R.id.ipsetting_addConfirm);
+        TextView addConfirm = (TextView) findViewById(R.id.ipsetting_addConfirm);
         addConfirm.setOnClickListener(this);
         findViewById(R.id.ipsetting_selectedConfirm).setOnClickListener(this);
 
@@ -93,6 +90,8 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
                 return false;
             }
         });
+        TextView title = (TextView) findViewById(R.id.ipSetting_title);
+        title.setText(clientName);
     }
 
     @Override

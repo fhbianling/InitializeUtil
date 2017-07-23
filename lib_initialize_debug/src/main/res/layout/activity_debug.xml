@@ -8,12 +8,16 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:gravity="center"
-        android:padding="10dp"
-        android:text="启动设置"
-        android:textColor="#333333"
-        android:textSize="20sp" />
+        android:text="初始化设置"
+        android:textColor="#159fff"
+        android:textSize="18sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#ccc" />
 
     <ListView
         android:id="@+id/debug_list"

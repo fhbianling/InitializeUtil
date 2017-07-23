@@ -83,9 +83,8 @@ public class TextClientActivity extends Activity implements View.OnClickListener
     }
 
     private void initWindowSetting() {
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     private void initView() {
@@ -93,29 +92,31 @@ public class TextClientActivity extends Activity implements View.OnClickListener
         et = (EditText) findViewById(R.id.text_et);
         btn = (Button) findViewById(R.id.text_complete);
         cb = (CheckBox) findViewById(R.id.text_cb);
+        TextView title = (TextView) findViewById(R.id.ipSetting_title);
+        title.setText(parseClient().getOptionsName());
         btn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if (optionsClient instanceof BooleanClient){
+        if (optionsClient instanceof BooleanClient) {
             ((BooleanClient) optionsClient).onResult(cb.isChecked());
             SharedPrefUtil.getInstance(this).putString(optionsClient.getOptionsName(), String.valueOf(cb.isChecked()));
             finish();
-        }else {
+        } else {
             String text = et.getText().toString();
-            if (TextUtils.isEmpty(text)){
+            if (TextUtils.isEmpty(text)) {
                 showToast("请输入内容");
                 return;
             }
             Object result = null;
 
-            if (optionsClient instanceof StringClient){
-                result=text;
-            }else if(optionsClient instanceof NumberClient){
-                result=parseLong(text);
-            }else if (optionsClient instanceof FloatClient){
-                result=parseFloat(text);
+            if (optionsClient instanceof StringClient) {
+                result = text;
+            } else if (optionsClient instanceof NumberClient) {
+                result = parseLong(text);
+            } else if (optionsClient instanceof FloatClient) {
+                result = parseFloat(text);
             }
 
             if (result != null) {
@@ -154,7 +155,7 @@ public class TextClientActivity extends Activity implements View.OnClickListener
     private Object parseFloat(String text) {
         try {
             return Float.parseFloat(text);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             e.printStackTrace();
             showToast("请输入正确的内容");
         }
@@ -164,7 +165,7 @@ public class TextClientActivity extends Activity implements View.OnClickListener
     private Object parseLong(String text) {
         try {
             return Long.parseLong(text);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             e.printStackTrace();
             showToast("请输入正确的内容");
         }
@@ -172,7 +173,7 @@ public class TextClientActivity extends Activity implements View.OnClickListener
     }
 
     private void showToast(String msg) {
-        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
 }

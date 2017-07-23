@@ -13,8 +13,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
-import java.util.List;
-
 import static com.bian.debugbox.box.InitializeUtil.LOG_TAG;
 import static com.bian.debugbox.box.InternalUtil.getScreenWidth;
 import static com.bian.debugbox.box.InternalUtil.getStatusBarHeight;
@@ -60,9 +58,9 @@ class FloatingButton implements View.OnTouchListener {
     }
 
     static void setVisible(boolean visible) {
-        Log.d(LOG_TAG,"setVisible:"+visible);
+        Log.d(LOG_TAG, "setVisible:" + visible);
         if (sInstance != null) {
-            sInstance.getView().setVisibility(visible ? View.VISIBLE : View.GONE);
+            sInstance.getView().setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
         }
     }
 
@@ -78,7 +76,7 @@ class FloatingButton implements View.OnTouchListener {
     private static WindowManager.LayoutParams getLayoutParams() {
         if (sLayoutParams == null) {
             int typePhone;
-            if (Build.VERSION.SDK_INT > 18) {
+            if (Build.VERSION.SDK_INT > 18 && Build.VERSION.SDK_INT < 25) {
                 typePhone = WindowManager.LayoutParams.TYPE_TOAST;
             } else {
                 typePhone = WindowManager.LayoutParams.TYPE_PHONE;
@@ -136,6 +134,7 @@ class FloatingButton implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        if (InitializeHomeActivity.isExisting()) return false;
         mPos.x = (int) event.getRawX();
         mPos.y = (int) event.getRawY();
         final int action = event.getAction();
