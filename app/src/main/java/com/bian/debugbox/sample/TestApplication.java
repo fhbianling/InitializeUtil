@@ -26,7 +26,7 @@ public class TestApplication extends Application {
 
             @Override
             public String getOptionsName() {
-                return "布尔测试";
+                return "boolean test";
             }
 
             @Override
@@ -42,13 +42,13 @@ public class TestApplication extends Application {
         InitializeUtil.addIpSettingClient(new IpSettingClient() {
             @Override
             public String getOptionsName() {
-                return "IP设置";
+                return "IP setting";
             }
 
             @Override
             public void onResult(String result) {
                 if (TextUtils.isEmpty(result)) {
-                    Toast.makeText(TestApplication.this, "Ip为空的回调", Toast.LENGTH_LONG).show();
+                    Toast.makeText(TestApplication.this, "Ip is null", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(TestApplication.this, result, Toast.LENGTH_LONG).show();
                 }
@@ -64,12 +64,12 @@ public class TestApplication extends Application {
         InitializeUtil.addFloatClient(new FloatClient() {
             @Override
             public String getOptionsName() {
-                return "浮点数测试1";
+                return "float test 1";
             }
 
             @Override
             public void onResult(Float result) {
-                Toast.makeText(TestApplication.this, "浮点数测试1："+String.valueOf(result), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TestApplication.this, "float test 1:"+String.valueOf(result), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -80,12 +80,12 @@ public class TestApplication extends Application {
         InitializeUtil.addFloatClient(new FloatClient() {
             @Override
             public String getOptionsName() {
-                return "浮点数测试2";
+                return "float test 2";
             }
 
             @Override
             public void onResult(Float result) {
-                Toast.makeText(TestApplication.this, "浮点数测试2："+String.valueOf(result), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TestApplication.this, "float test 2:"+String.valueOf(result), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -96,12 +96,12 @@ public class TestApplication extends Application {
         InitializeUtil.addNumberClient(new NumberClient() {
             @Override
             public String getOptionsName() {
-                return "整形数测试1";
+                return "number test 1";
             }
 
             @Override
             public void onResult(Long result) {
-                Toast.makeText(TestApplication.this, "整形数测试1："+String.valueOf(result), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TestApplication.this, "number test 1:"+String.valueOf(result), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -112,12 +112,12 @@ public class TestApplication extends Application {
         InitializeUtil.addNumberClient(new NumberClient() {
             @Override
             public String getOptionsName() {
-                return "整形数测试2";
+                return "number test 2";
             }
 
             @Override
             public void onResult(Long result) {
-                Toast.makeText(TestApplication.this, "整形数测试2："+String.valueOf(result), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TestApplication.this, "number test 2:"+String.valueOf(result), Toast.LENGTH_SHORT).show();
             }
 
             @Override

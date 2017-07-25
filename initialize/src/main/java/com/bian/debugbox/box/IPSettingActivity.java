@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * desc ${IP设置Activity}
  */
 public class IPSettingActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
-    private static final String KEY_CLIENT = "clilent";
+    private static final String KEY_CLIENT = "client";
     private TextView currentIp;
     private ListView ipList;
     private int[] etIds = new int[]{
@@ -115,7 +115,7 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
             }
         }
         if (!checkIp(host)) {
-            Toast.makeText(this, "请输入正确的IP地址,", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "wrong ip", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -141,7 +141,7 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
 
     public void selectedIp(String ip) {
         getClient().onResult(ip);
-        currentIp.setText(String.format("当前选中IP：%s", ip));
+        currentIp.setText(String.format("current IP:%s", ip));
     }
 
     private OptionsClient getClient() {

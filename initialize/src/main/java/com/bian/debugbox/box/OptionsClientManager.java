@@ -45,10 +45,10 @@ class OptionsClientManager {
 
     private static void checkClientIllgal(OptionsClient optionsClient) {
         if (clients.containsKey(optionsClient.getOptionsName())) {
-            Log.e(InitializeUtil.LOG_TAG, "重复添加的统一设置项将只以最后一项为准");
+            Log.e(InitializeUtil.LOG_TAG, "repeat options client");
         }
         if (TextUtils.isEmpty(optionsClient.getOptionsName())){
-            throw new IllegalArgumentException("添加的OptionsClient必须有名称");
+            throw new IllegalArgumentException("OptionsClient must have a name");
         }
     }
 
@@ -59,7 +59,7 @@ class OptionsClientManager {
                 try {
                     client.onResult(parseCallBackValue(context, client));
                 } catch (Exception e) {
-                    Log.e(InitializeUtil.LOG_TAG, "回调(" + client.getOptionsName() + ")当前值错误", e);
+                    Log.e(InitializeUtil.LOG_TAG, "callback current value of(" + client.getOptionsName() + ") failed", e);
                 }
             } else {
                 IPDbManager.IPEntity ipEntity =

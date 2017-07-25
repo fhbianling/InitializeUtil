@@ -105,7 +105,7 @@ public class TextClientActivity extends Activity implements View.OnClickListener
         } else {
             String text = et.getText().toString();
             if (TextUtils.isEmpty(text)) {
-                showToast("请输入内容");
+                showToast("input something");
                 return;
             }
             Object result = null;
@@ -156,7 +156,7 @@ public class TextClientActivity extends Activity implements View.OnClickListener
             return Float.parseFloat(text);
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            showToast("请输入正确的内容");
+            showToast("error input");
         }
         return null;
     }
@@ -166,7 +166,7 @@ public class TextClientActivity extends Activity implements View.OnClickListener
             return Long.parseLong(text);
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            showToast("请输入正确的内容");
+            showToast("error input");
         }
         return null;
     }

@@ -307,13 +307,9 @@ class IPDbManager {
 
     private static class IPDbHelper extends SQLiteOpenHelper {
 
-        //表名
         static final String TABLE_NAME = "IpInfo";
-        //数据库名
         private static final String DATABASE_NAME = "IPDebug.db";
-        //版本号
         private static final int DATABASE_VERSION = 1;
-        //建表语句
         private static final String CREATE_USERINFO_SQL = "CREATE TABLE "
                 + TABLE_NAME
                 + " (id Integer primary key autoincrement,"

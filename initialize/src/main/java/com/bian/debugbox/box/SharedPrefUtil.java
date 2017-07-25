@@ -7,10 +7,6 @@ import android.text.TextUtils;
 
 import com.bian.debugbox.box.client.OptionsClient;
 
-/**
- * SharePreferences工具类
- * Created by BianLing on 2016/8/29.
- */
 class SharedPrefUtil {
     @SuppressLint("StaticFieldLeak")
     private static volatile SharedPrefUtil sInstance;
@@ -29,20 +25,20 @@ class SharedPrefUtil {
         return sInstance;
     }
 
-    private SharedPreferences prefrence;
+    private SharedPreferences preference;
 
     private SharedPrefUtil(String preferenceName,Context context) {
-        prefrence = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
+        preference = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
     }
 
     void putString(String key, String value) {
-        SharedPreferences.Editor editor = this.prefrence.edit();
+        SharedPreferences.Editor editor = this.preference.edit();
         editor.putString(key, value);
         editor.apply();
     }
 
     String getString(OptionsClient client) {
-        String result = this.prefrence.getString(client.getOptionsName(), "");
+        String result = this.preference.getString(client.getOptionsName(), "");
         return TextUtils.isEmpty(result)?"":result;
     }
 

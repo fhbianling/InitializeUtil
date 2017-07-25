@@ -105,10 +105,10 @@ public class InitializeUtil {
     }
 
     private static void checkPermissionAndInflate(Activity activity) {
-        Log.d(LOG_TAG, "在" + activity.getClass().getName() + "检查悬浮窗权限");
+        Log.d(LOG_TAG, "check permission of system alert window at:" + activity.getClass().getName());
 
         boolean hasPermission = isPermissionGranted(activity);
-        Log.d(LOG_TAG,"悬浮窗权限检查结果："+hasPermission);
+        Log.d(LOG_TAG,"permission result:"+hasPermission);
         if (hasPermission) {
             inflateButton(activity);
         } else {
@@ -117,9 +117,8 @@ public class InitializeUtil {
     }
 
     private static void requestPermission(Activity activity) {
-        Log.d(LOG_TAG,"申请悬浮窗权限");
+        Log.d(LOG_TAG,"request permission");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Toast.makeText(activity, "使用初始化弹窗需要悬浮窗权限，请开启", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                     Uri.parse("package:" + activity.getPackageName()));
             activity.startActivityForResult(intent, REQUEST_CODE);
@@ -143,7 +142,7 @@ public class InitializeUtil {
     }
 
     private static void inflateButton(Context context) {
-        Log.d(LOG_TAG,"加载悬浮窗");
+        Log.d(LOG_TAG,"inflate floating button");
         inflated = true;
         FloatingButton.inflateButton(context);
         if (sEnableValueCallBackWhenAppStart){

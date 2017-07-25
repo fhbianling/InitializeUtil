@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
 android {
     compileSdkVersion 25
@@ -24,5 +26,83 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-annotations:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
+}
+
+
+version = "1.0.0"
+def siteUrl = 'https://github.com/fhbianling/InitializeUtil' // 项目主页。
+def gitUrl = 'https://github.com/fhbianling/InitializeUtil.git' // Git仓库的url。
+
+group = "com.bianling"
+// 根节点添加
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                name 'Apk Initialize Util'
+                description 'change custom configs when apk is running'
+                url siteUrl
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'bianling'
+                        name 'BianLing'
+                        email 'fhbianling@yahoo.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+// 这里是读取Bintray相关的信息，我们上传项目到github上的时候会把gradle文件传上去，所以不要把帐号密码的信息直接写在这里，写在local.properties中，这里动态读取。
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("bintray.user") // Bintray的用户名。
+    key = properties.getProperty("bintray.apikey") // Bintray刚才保存的ApiKey。
+
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        name = "init"
+        userOrg = 'bianlingfh'
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true // 是否是公开项目。
+    }
 }
 

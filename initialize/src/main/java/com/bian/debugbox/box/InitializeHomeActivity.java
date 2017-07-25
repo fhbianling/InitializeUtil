@@ -172,23 +172,23 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
         }
 
         private void setCurrentValue(ClientHolder clientHolder, OptionsClient item) {
-            clientHolder.debugOptionsName.setText(String.format("设置：%s", item.getOptionsName()));
+            clientHolder.debugOptionsName.setText(String.format("Setting:%s", item.getOptionsName()));
 
             if (!(item instanceof IpSettingClient)) {
                 String currentValue = sharedPrefUtil.getString(item);
                 String showInfo;
                 if (TextUtils.isEmpty(currentValue)) {
-                    showInfo = "默认值：" + String.valueOf(item.getDefaultValue());
+                    showInfo = "Default:" + String.valueOf(item.getDefaultValue());
                 } else {
                     showInfo = currentValue;
                 }
                 clientHolder.debugStates.setText(
-                        String.format("当前值：%s", showInfo));
+                        String.format("Current:%s", showInfo));
             } else {
                 IPDbManager.IPEntity ipEntity = IPDbManager.getInstance(context).querySelected(item.getOptionsName());
 
                 clientHolder.debugStates.setText(
-                        String.format("当前值：%s", ipEntity != null ? ipEntity.getIp() : "默认值：" + ((IpSettingClient) item).getDefaultValue()));
+                        String.format("Current:%s", ipEntity != null ? ipEntity.getIp() : "Default:" + ((IpSettingClient) item).getDefaultValue()));
             }
         }
 
