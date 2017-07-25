@@ -11,14 +11,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true">
         <activity
-            android:name=".InitializeHomeActivity"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+            android:name=".InitializeHomeActivity" />
         <activity
-            android:name=".IPSettingActivity"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+            android:name=".IPSettingActivity" />
         <activity
-            android:name=".TextClientActivity"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+            android:name=".TextClientActivity" />
     </application>
 
 </manifest>

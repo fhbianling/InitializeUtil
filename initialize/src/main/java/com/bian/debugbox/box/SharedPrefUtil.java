@@ -4,18 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Base64;
 
-import com.bian.debugbox.box.client.BooleanClient;
-import com.bian.debugbox.box.client.FloatClient;
-import com.bian.debugbox.box.client.NumberClient;
 import com.bian.debugbox.box.client.OptionsClient;
-import com.bian.debugbox.box.client.StringClient;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 /**
  * SharePreferences工具类
