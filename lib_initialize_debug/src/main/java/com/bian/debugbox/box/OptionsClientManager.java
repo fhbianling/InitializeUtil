@@ -1,8 +1,14 @@
 package com.bian.debugbox.box;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.bian.debugbox.box.client.BooleanClient;
+import com.bian.debugbox.box.client.FloatClient;
+import com.bian.debugbox.box.client.IpSettingClient;
+import com.bian.debugbox.box.client.NumberClient;
 import com.bian.debugbox.box.client.OptionsClient;
 
 import java.util.ArrayList;
@@ -16,19 +22,19 @@ import java.util.Map;
  * desc ${TODO}
  */
 class OptionsClientManager {
-    private static final LinkedHashMap<String,OptionsClient> clients = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, OptionsClient> clients = new LinkedHashMap<>();
 
     static List<OptionsClient> getClients() {
-        List<OptionsClient> list=new ArrayList<>();
+        List<OptionsClient> list = new ArrayList<>();
         for (Map.Entry<String, OptionsClient> entry : clients.entrySet()) {
             list.add(entry.getValue());
         }
         return list;
     }
 
-    static void addClient(OptionsClient optionsClient){
-        logRepeat(optionsClient);
-        clients.put(optionsClient.getOptionsName(),optionsClient);
+    static void addClient(OptionsClient optionsClient) {
+        checkClientIllgal(optionsClient);
+        clients.put(optionsClient.getOptionsName(), optionsClient);
     }
 
     static
@@ -37,9 +43,49 @@ class OptionsClientManager {
         return clients.get(optionsName);
     }
 
-    private static void logRepeat(OptionsClient optionsClient) {
-        if (clients.containsKey(optionsClient.getOptionsName())){
-            Log.e(InitializeUtil.LOG_TAG,"重复添加的统一设置项将只以最后一项为准");
+    private static void checkClientIllgal(OptionsClient optionsClient) {
+        if (clients.containsKey(optionsClient.getOptionsName())) {
+            Log.e(InitializeUtil.LOG_TAG, "重复添加的统一设置项将只以最后一项为准");
+        }
+        if (TextUtils.isEmpty(optionsClient.getOptionsName())){
+            throw new IllegalArgumentException("添加的OptionsClient必须有名称");
+        }
+    }
+
+    static void callBackAllValue(Context context) {
+        List<OptionsClient> clients = OptionsClientManager.getClients();
+        for (OptionsClient client : clients) {
+            if (!(client instanceof IpSettingClient)) {
+                try {
+                    client.onResult(parseCallBackValue(context, client));
+                } catch (Exception e) {
+                    Log.e(InitializeUtil.LOG_TAG, "回调(" + client.getOptionsName() + ")当前值错误", e);
+                }
+            } else {
+                IPDbManager.IPEntity ipEntity =
+                        IPDbManager.getInstance(context).querySelected(client.getOptionsName());
+                ((IpSettingClient) client).onResult(
+                        ipEntity != null ?
+                                ipEntity.getIp() :
+                                ((IpSettingClient) client).getDefaultValue());
+            }
+        }
+    }
+
+    private static Object parseCallBackValue(Context context, OptionsClient client) throws Exception {
+        SharedPrefUtil sharedPrefUtil = SharedPrefUtil.getInstance(context);
+        String currentValue = sharedPrefUtil.getString(client);
+
+        if (TextUtils.isEmpty(currentValue)) return client.getDefaultValue();
+
+        if (client instanceof BooleanClient) {
+            return Boolean.parseBoolean(currentValue);
+        } else if (client instanceof NumberClient) {
+            return Long.parseLong(currentValue);
+        } else if (client instanceof FloatClient) {
+            return Float.parseFloat(currentValue);
+        } else {
+            return currentValue;
         }
     }
 }

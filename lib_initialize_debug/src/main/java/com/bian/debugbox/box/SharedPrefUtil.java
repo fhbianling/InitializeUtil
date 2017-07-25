@@ -53,7 +53,7 @@ class SharedPrefUtil {
 
     String getString(OptionsClient client) {
         String result = this.prefrence.getString(client.getOptionsName(), "");
-        return TextUtils.isEmpty(result)?"暂无数据":result;
+        return TextUtils.isEmpty(result)?"":result;
     }
 
 }

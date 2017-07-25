@@ -9,12 +9,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -175,12 +175,20 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
             clientHolder.debugOptionsName.setText(String.format("设置：%s", item.getOptionsName()));
 
             if (!(item instanceof IpSettingClient)) {
+                String currentValue = sharedPrefUtil.getString(item);
+                String showInfo;
+                if (TextUtils.isEmpty(currentValue)) {
+                    showInfo = "默认值：" + String.valueOf(item.getDefaultValue());
+                } else {
+                    showInfo = currentValue;
+                }
                 clientHolder.debugStates.setText(
-                        String.format("当前值：%s", sharedPrefUtil.getString(item)));
+                        String.format("当前值：%s", showInfo));
             } else {
                 IPDbManager.IPEntity ipEntity = IPDbManager.getInstance(context).querySelected(item.getOptionsName());
+
                 clientHolder.debugStates.setText(
-                        String.format("当前值：%s", ipEntity != null ? ipEntity.getIp() : ""));
+                        String.format("当前值：%s", ipEntity != null ? ipEntity.getIp() : "默认值：" + ((IpSettingClient) item).getDefaultValue()));
             }
         }
 

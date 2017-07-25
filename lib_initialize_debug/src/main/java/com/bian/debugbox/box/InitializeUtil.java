@@ -22,6 +22,8 @@ import com.bian.debugbox.box.client.NumberClient;
 import com.bian.debugbox.box.client.OptionsClient;
 import com.bian.debugbox.box.client.StringClient;
 
+import java.util.List;
+
 /**
  * author 边凌
  * date 2017/3/28 15:12
@@ -37,6 +39,7 @@ public class InitializeUtil {
     private static Application application;
     private static boolean debug = true;
     private static boolean inflated = false;
+    private static boolean sEnableValueCallBackWhenAppStart=true;
 
     public static void init(Application application) {
         InitializeUtil.application = application;
@@ -61,6 +64,10 @@ public class InitializeUtil {
         } else {
             setDefaultIp(clientName, host, port);
         }
+    }
+
+    public static void setEnableValueCallBackWhenAppStart(boolean enableValueCallBackWhenAppStart){
+        InitializeUtil.sEnableValueCallBackWhenAppStart =enableValueCallBackWhenAppStart;
     }
 
     public static void setDebug(boolean debug) {
@@ -141,6 +148,9 @@ public class InitializeUtil {
         Log.d(LOG_TAG,"加载悬浮窗");
         inflated = true;
         FloatingButton.inflateButton(context);
+        if (sEnableValueCallBackWhenAppStart){
+            OptionsClientManager.callBackAllValue(context);
+        }
     }
 
     public static void onPermissionResult(Activity activity) {

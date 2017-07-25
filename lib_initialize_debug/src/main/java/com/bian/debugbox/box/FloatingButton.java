@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 
 import static com.bian.debugbox.box.InitializeUtil.LOG_TAG;
@@ -34,6 +35,7 @@ class FloatingButton implements View.OnTouchListener {
     private Point mPos = new Point();
     private Point mLastPos = new Point();
     private int scaledTouchSlop;
+    private int xOffSet, yOffSet;
 
     private FloatingButton(Context context) {
         mView = View.inflate(context.getApplicationContext(), R.layout.float_window, null);
@@ -44,6 +46,13 @@ class FloatingButton implements View.OnTouchListener {
         mLastPos.x = -1;
         scaledTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mView.setOnTouchListener(this);
+        mView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                xOffSet =mView.getWidth()/2;
+                yOffSet =mView.getHeight()/2;
+            }
+        });
     }
 
     private static FloatingButton getInstance(Context context) {
@@ -118,11 +127,11 @@ class FloatingButton implements View.OnTouchListener {
     }
 
     private int getMoveY() {
-        return mPos.y - statusBarHeight;
+        return mPos.y - statusBarHeight-yOffSet;
     }
 
     private int getMoveX() {
-        return screenWidth - mPos.x;
+        return screenWidth - mPos.x-xOffSet;
     }
 
     private void updateWindowPosition(int x, int y) {

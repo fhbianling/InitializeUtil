@@ -6,7 +6,9 @@ import android.widget.Toast;
 
 import com.bian.debugbox.box.InitializeUtil;
 import com.bian.debugbox.box.client.BooleanClient;
+import com.bian.debugbox.box.client.FloatClient;
 import com.bian.debugbox.box.client.IpSettingClient;
+import com.bian.debugbox.box.client.NumberClient;
 
 /**
  * author 边凌
@@ -31,6 +33,11 @@ public class TestApplication extends Application {
             public void onResult(Boolean result) {
                 Toast.makeText(TestApplication.this, result + "", Toast.LENGTH_SHORT).show();
             }
+
+            @Override
+            public Boolean getDefaultValue() {
+                return false;
+            }
         });
         InitializeUtil.addIpSettingClient(new IpSettingClient() {
             @Override
@@ -48,7 +55,75 @@ public class TestApplication extends Application {
                 TestApplication.sIp =result;
             }
 
+            @Override
+            public String getDefaultValue() {
+                return "http://192.168.1.44:8080";
+            }
+
         });
-        InitializeUtil.setDefaultIp("IP设置","http://192.168.1.44:8080");
+        InitializeUtil.addFloatClient(new FloatClient() {
+            @Override
+            public String getOptionsName() {
+                return "浮点数测试1";
+            }
+
+            @Override
+            public void onResult(Float result) {
+                Toast.makeText(TestApplication.this, "浮点数测试1："+String.valueOf(result), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public Float getDefaultValue() {
+                return 0.1f;
+            }
+        });
+        InitializeUtil.addFloatClient(new FloatClient() {
+            @Override
+            public String getOptionsName() {
+                return "浮点数测试2";
+            }
+
+            @Override
+            public void onResult(Float result) {
+                Toast.makeText(TestApplication.this, "浮点数测试2："+String.valueOf(result), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public Float getDefaultValue() {
+                return 0.5f;
+            }
+        });
+        InitializeUtil.addNumberClient(new NumberClient() {
+            @Override
+            public String getOptionsName() {
+                return "整形数测试1";
+            }
+
+            @Override
+            public void onResult(Long result) {
+                Toast.makeText(TestApplication.this, "整形数测试1："+String.valueOf(result), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public Long getDefaultValue() {
+                return 2l;
+            }
+        });
+        InitializeUtil.addNumberClient(new NumberClient() {
+            @Override
+            public String getOptionsName() {
+                return "整形数测试2";
+            }
+
+            @Override
+            public void onResult(Long result) {
+                Toast.makeText(TestApplication.this, "整形数测试2："+String.valueOf(result), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public Long getDefaultValue() {
+                return 5l;
+            }
+        });
     }
 }
