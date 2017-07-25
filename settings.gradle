@@ -1,1 +1,1 @@
-include ':app', ':lib_initialize_release', ':lib_initialize_debug'
+include ':app', ':lib_initialize'
