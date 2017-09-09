@@ -33,7 +33,7 @@ Add the following dependency to your build.gradle file.
  
 More clients:FloatClient,IpSettingClient,NumberClient and StringClient.
 
-#### Avaliable methods: ####
+#### Available methods: ####
     **init(android.app.Application application)** 
     
     **onPermissionResult(android.app.Activity activity)** 
