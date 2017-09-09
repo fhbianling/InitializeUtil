@@ -4,13 +4,13 @@ apply plugin: 'com.jfrog.bintray'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "25.0.3"
 
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "1.1.0"
 
     }
     buildTypes {
@@ -29,7 +29,7 @@ dependencies {
 }
 
 
-version = "1.0.0"
+version = "1.1.0"
 def siteUrl = 'https://github.com/fhbianling/InitializeUtil' // 项目主页。
 def gitUrl = 'https://github.com/fhbianling/InitializeUtil.git' // Git仓库的url。
 

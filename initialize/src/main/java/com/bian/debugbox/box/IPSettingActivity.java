@@ -31,26 +31,27 @@ import java.util.regex.Pattern;
  * date 2017/3/28 16:23
  * desc ${IP设置Activity}
  */
-public class IPSettingActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class IPSettingActivity extends Activity implements View.OnClickListener, AdapterView
+        .OnItemClickListener {
     private static final String KEY_CLIENT = "client";
+    private final int[] etIds = new int[]{
+            R.id.ipSetting_et1,
+            R.id.ipSetting_et2,
+            R.id.ipSetting_et3,
+            R.id.ipSetting_et4,
+            R.id.ipSetting_et5
+    };
+    private final Pattern pattern = Pattern.compile("((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}" +
+            "(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)");
     private TextView currentIp;
     private ListView ipList;
-    private int[] etIds = new int[]{
-            R.id.ipsetting_et1,
-            R.id.ipsetting_et2,
-            R.id.ipsetting_et3,
-            R.id.ipsetting_et4,
-            R.id.ipsetting_et5
-    };
     private EditText[] editTexts = new EditText[etIds.length];
-
     private IPAdapter ipAdapter;
     private String clientName;
-    private Pattern pattern = Pattern.compile("((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)");
 
     public static void start(Context context, OptionsClient item) {
         Intent starter = new Intent(context, IPSettingActivity.class);
-        starter.putExtra(KEY_CLIENT,item.getOptionsName());
+        starter.putExtra(KEY_CLIENT, item.getOptionsName());
         context.startActivity(starter);
     }
 
@@ -59,7 +60,7 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
         super.onCreate(savedInstanceState);
         initSetting();
         setContentView(R.layout.activity_ipsetting);
-        clientName =getIntent().getStringExtra(KEY_CLIENT);
+        clientName = getIntent().getStringExtra(KEY_CLIENT);
         findView();
     }
 
@@ -69,19 +70,20 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
     }
 
     private void findView() {
-        currentIp = (TextView) findViewById(R.id.ipsetting_currentIp);
-        ipList = (ListView) findViewById(R.id.ipsetting_list);
+        currentIp = (TextView) findViewById(R.id.ipSetting_currentIp);
+        ipList = (ListView) findViewById(R.id.ipSetting_list);
         ipAdapter = new IPAdapter(this);
         ipList.setAdapter(ipAdapter);
         ipList.setOnItemClickListener(this);
-        TextView addConfirm = (TextView) findViewById(R.id.ipsetting_addConfirm);
+        TextView addConfirm = (TextView) findViewById(R.id.ipSetting_addConfirm);
         addConfirm.setOnClickListener(this);
-        findViewById(R.id.ipsetting_selectedConfirm).setOnClickListener(this);
+        findViewById(R.id.ipSetting_selectedConfirm).setOnClickListener(this);
 
         for (int i = 0; i < etIds.length; i++) {
             editTexts[i] = (EditText) findViewById(etIds[i]);
         }
-        editTexts[editTexts.length - 1].setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        editTexts[editTexts.length - 1].setOnEditorActionListener(new TextView
+                .OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -96,9 +98,9 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.ipsetting_addConfirm) {
+        if (v.getId() == R.id.ipSetting_addConfirm) {
             addIPEntity();
-        } else if (v.getId() == R.id.ipsetting_selectedConfirm) {
+        } else if (v.getId() == R.id.ipSetting_selectedConfirm) {
             finish();
         }
     }
@@ -115,12 +117,12 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
             }
         }
         if (!checkIp(host)) {
-            Toast.makeText(this, "wrong ip", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.hint_7, Toast.LENGTH_SHORT).show();
             return;
         }
 
         ipAdapter.clearSelect();
-        IPDbManager.getInstance(this).insertIP(clientName,host, port);
+        IPDbManager.getInstance(this).insertIP(clientName, host, port);
         ipAdapter.refresh(this);
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         if (imm.isActive()) {
@@ -139,16 +141,16 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
         ipAdapter.refresh(this);
     }
 
-    public void selectedIp(String ip) {
+    private void selectedIp(String ip) {
         getClient().onResult(ip);
-        currentIp.setText(String.format("current IP:%s", ip));
+        currentIp.setText(String.format(getString(R.string.hint_8), ip));
     }
 
     private OptionsClient getClient() {
         return OptionsClientManager.getOptionsClient(getIntent().getStringExtra(KEY_CLIENT));
     }
 
-    public boolean checkIp(String host) {
+    private boolean checkIp(String host) {
         Matcher matcher = pattern.matcher(host);
         return matcher.matches();
     }
@@ -215,7 +217,7 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
         @Override
         public void notifyDataSetChanged() {
             super.notifyDataSetChanged();
-            if (getCount()==0){
+            if (getCount() == 0) {
                 selectedIp("");
             }
         }
@@ -228,8 +230,8 @@ public class IPSettingActivity extends Activity implements View.OnClickListener,
         }
 
         private class IPHolder {
-            TextView ip;
-            TextView delete;
+            private TextView ip;
+            private TextView delete;
             private View root;
 
             IPHolder(View root) {

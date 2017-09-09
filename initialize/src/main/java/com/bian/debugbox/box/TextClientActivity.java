@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -31,7 +31,6 @@ public class TextClientActivity extends Activity implements View.OnClickListener
     private final static String KEY_NAME = "TextClientActivity";
     private TextView tv;
     private EditText et;
-    private Button btn;
     private CheckBox cb;
     private OptionsClient optionsClient;
 
@@ -74,6 +73,10 @@ public class TextClientActivity extends Activity implements View.OnClickListener
         if (optionsClient instanceof FloatClient) {
             et.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         }
+
+        int maxInputLength = optionsClient instanceof StringClient ? 20 : 10;
+        et.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxInputLength)});
+
         et.setText(savedValue);
     }
 
@@ -89,27 +92,25 @@ public class TextClientActivity extends Activity implements View.OnClickListener
     private void initView() {
         tv = (TextView) findViewById(R.id.text_tv);
         et = (EditText) findViewById(R.id.text_et);
-        btn = (Button) findViewById(R.id.text_complete);
         cb = (CheckBox) findViewById(R.id.text_cb);
-        TextView title = (TextView) findViewById(R.id.ipSetting_title);
-        title.setText(parseClient().getOptionsName());
-        btn.setOnClickListener(this);
+        ((TextView) findViewById(R.id.ipSetting_title)).setText(parseClient().getOptionsName());
+        findViewById(R.id.text_complete).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         if (optionsClient instanceof BooleanClient) {
             ((BooleanClient) optionsClient).onResult(cb.isChecked());
-            SharedPrefUtil.getInstance(this).putString(optionsClient.getOptionsName(), String.valueOf(cb.isChecked()));
+            SharedPrefUtil.getInstance(this).putString(optionsClient.getOptionsName(), String
+                    .valueOf(cb.isChecked()));
             finish();
         } else {
             String text = et.getText().toString();
             if (TextUtils.isEmpty(text)) {
-                showToast("input something");
+                showToast(getString(R.string.hint_9));
                 return;
             }
             Object result = null;
-
             if (optionsClient instanceof StringClient) {
                 result = text;
             } else if (optionsClient instanceof NumberClient) {
@@ -156,7 +157,7 @@ public class TextClientActivity extends Activity implements View.OnClickListener
             return Float.parseFloat(text);
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            showToast("error input");
+            showToast(getString(R.string.hint_10));
         }
         return null;
     }
@@ -166,7 +167,7 @@ public class TextClientActivity extends Activity implements View.OnClickListener
             return Long.parseLong(text);
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            showToast("error input");
+            showToast(getString(R.string.hint_10));
         }
         return null;
     }

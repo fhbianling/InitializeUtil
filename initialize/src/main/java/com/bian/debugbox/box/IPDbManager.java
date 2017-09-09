@@ -7,12 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.bian.debugbox.box.InitializeUtil.LOG_TAG;
 
 /**
  * author 边凌
@@ -27,11 +24,11 @@ class IPDbManager {
     private final static String COLUMN_SELECTED = "selected";
     private final static String COLUMN_CREATED_DATE = "createDate";
     private final static String COLUMN_KEY = "key";
-    private static IPDbManager sInstance;
-    private IPDbHelper ipDbHelper;
+    private volatile static IPDbManager sInstance;
+    private final IPDbHelper dbHelper;
 
     private IPDbManager(Context context) {
-        ipDbHelper = new IPDbHelper(context);
+        dbHelper = new IPDbHelper(context);
     }
 
     static IPDbManager getInstance(Context context) {
@@ -56,7 +53,7 @@ class IPDbManager {
         String whereClause = "id=?";
         String[] whereArgs = {String.valueOf(id)};
         SQLiteDatabase sqLiteDatabase;
-        sqLiteDatabase = ipDbHelper.getWritableDatabase();
+        sqLiteDatabase = dbHelper.getWritableDatabase();
         try {
             sqLiteDatabase.update(IPDbHelper.TABLE_NAME, cv, whereClause, whereArgs);
         } catch (Exception e) {
@@ -72,7 +69,7 @@ class IPDbManager {
         if (TextUtils.isEmpty(host)) {
             return;
         }
-        Log.d(LOG_TAG, "insertIp:" + host + ":" + port);
+        L.d("insertIp:" + host + ":" + port);
         IPEntity ipEntity1 = queryIp(host, port);
         if (ipEntity1 == null) {
             ContentValues cv = new ContentValues();
@@ -83,7 +80,7 @@ class IPDbManager {
             cv.put(COLUMN_CREATED_DATE, System.currentTimeMillis());
             SQLiteDatabase sqLiteDatabase = null;
             try {
-                sqLiteDatabase = ipDbHelper.getWritableDatabase();
+                sqLiteDatabase = dbHelper.getWritableDatabase();
                 long insert = sqLiteDatabase.insert(IPDbHelper.TABLE_NAME, null, cv);
                 if (insert == 1) {
                     sqLiteDatabase.insert(IPDbHelper.TABLE_NAME, null, cv);
@@ -106,7 +103,7 @@ class IPDbManager {
         String[] selectionArgs = {host, port};
         SQLiteDatabase sqLiteDatabase = null;
         try {
-            sqLiteDatabase = ipDbHelper.getWritableDatabase();
+            sqLiteDatabase = dbHelper.getWritableDatabase();
             Cursor query = sqLiteDatabase.query(IPDbHelper.TABLE_NAME, null, whereClause, selectionArgs, null, null, null, null);
             List<IPEntity> ipEntities = new ArrayList<>();
             if (query.moveToFirst()) {
@@ -132,12 +129,12 @@ class IPDbManager {
         if (ipEntity == null || ipEntity.getId() == null) {
             return;
         }
-        Log.d(LOG_TAG, "deleteIp:" + ipEntity.getIp());
+        L.d("deleteIp:" + ipEntity.getIp());
         String whereClause = "id=?";
         String[] whereArgs = {String.valueOf(ipEntity.getId())};
         SQLiteDatabase sqLiteDatabase = null;
         try {
-            sqLiteDatabase = ipDbHelper.getWritableDatabase();
+            sqLiteDatabase = dbHelper.getWritableDatabase();
             sqLiteDatabase.delete(IPDbHelper.TABLE_NAME, whereClause, whereArgs);
         } catch (Exception e) {
             e.printStackTrace();
@@ -165,7 +162,7 @@ class IPDbManager {
         List<IPEntity> list = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = null;
         try {
-            sqLiteDatabase = ipDbHelper.getWritableDatabase();
+            sqLiteDatabase = dbHelper.getWritableDatabase();
             Cursor cursor = sqLiteDatabase.query(IPDbHelper.TABLE_NAME, null, null, null, null, null, null);
             if (cursor.moveToFirst()) {
                 while (cursor.moveToNext()) {
@@ -310,7 +307,7 @@ class IPDbManager {
         static final String TABLE_NAME = "IpInfo";
         private static final String DATABASE_NAME = "IPDebug.db";
         private static final int DATABASE_VERSION = 1;
-        private static final String CREATE_USERINFO_SQL = "CREATE TABLE "
+        private static final String CREATE_USER_INFO_SQL = "CREATE TABLE "
                 + TABLE_NAME
                 + " (id Integer primary key autoincrement,"
                 + " createDate integer,"
@@ -320,19 +317,13 @@ class IPDbManager {
                 + " selected integer);";
 
         IPDbHelper(Context context) {
-            this(context, DATABASE_NAME, null, DATABASE_VERSION);
-
-        }
-
-        private IPDbHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-            super(context, name, factory, version);
-            Log.d(LOG_TAG, "Constructor of IPDbHelper");
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(CREATE_USERINFO_SQL);
-            Log.d(LOG_TAG, "onCreate of IPDbHelper");
+            db.execSQL(CREATE_USER_INFO_SQL);
+            L.d("onCreate of IPDbHelper");
         }
 
         @Override
@@ -341,7 +332,7 @@ class IPDbManager {
                 db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
                 onCreate(db);
             }
-            Log.d(LOG_TAG, "onUpgrade of IPDbHelper");
+            L.d("onUpgrade of IPDbHelper");
         }
     }
 }

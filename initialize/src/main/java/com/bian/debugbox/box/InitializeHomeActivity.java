@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,27 +24,19 @@ import com.bian.debugbox.box.client.OptionsClient;
 
 import java.util.List;
 
-import static com.bian.debugbox.box.InitializeUtil.LOG_TAG;
-
 /**
  * author 边凌
  * date 2017/3/28 15:40
  * desc ${TODO}
  */
 
-public class InitializeHomeActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class InitializeHomeActivity extends Activity
+        implements View.OnClickListener, AdapterView.OnItemClickListener {
     private final static int REQUEST_TEXT_CLIENT = 0X22;
+    private static boolean sExisting;
     private ListView clientList;
     private ClientAdapter clientAdapter;
     private boolean first = true;
-
-    public static void setExisting(boolean sExisting) {
-        InitializeHomeActivity.sExisting = sExisting;
-        Log.d(LOG_TAG, "setExisting:" + sExisting);
-        FloatingButton.setVisible(!sExisting);
-    }
-
-    private static boolean sExisting;
 
     public static void start(Context context) {
         Intent starter = new Intent(context.getApplicationContext(), InitializeHomeActivity.class);
@@ -57,6 +48,11 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
         return sExisting;
     }
 
+    private static void setExisting(boolean sExisting) {
+        InitializeHomeActivity.sExisting = sExisting;
+        FloatingButton.setVisible(!sExisting);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +61,6 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
         permissionCheck();
         findView();
         initClientList();
-        Log.d(LOG_TAG, "onCreate");
         setExisting(true);
     }
 
@@ -86,9 +81,12 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
 
     private void permissionCheck() {
         try {
-            int code = PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int code = PermissionChecker.checkSelfPermission(this,
+                                                             Manifest.permission
+                                                                     .WRITE_EXTERNAL_STORAGE);
             if (code != PermissionChecker.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,6 +119,13 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
         } else {
             TextClientActivity.start(REQUEST_TEXT_CLIENT, this, item);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        L.d("onDestroy");
+        setExisting(false);
     }
 
     private static class ClientAdapter extends BaseAdapter {
@@ -158,7 +163,8 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
         public View getView(int position, View convertView, ViewGroup parent) {
             ClientHolder clientHolder;
             if (convertView == null) {
-                convertView = LayoutInflater.from(context).inflate(R.layout.item_debug, parent, false);
+                convertView = LayoutInflater.from(context)
+                                            .inflate(R.layout.item_debug, parent, false);
                 clientHolder = new ClientHolder(convertView);
                 convertView.setTag(clientHolder);
             } else {
@@ -172,27 +178,37 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
         }
 
         private void setCurrentValue(ClientHolder clientHolder, OptionsClient item) {
-            clientHolder.debugOptionsName.setText(String.format("Setting:%s", item.getOptionsName()));
+            clientHolder.debugOptionsName.setText(
+                    String.format(context.getString(R.string.hint_13), item.getOptionsName()));
+
+            String formatOfCurrentSetting = context.getString(R.string.hint_11);
+            String formatOfDefaultSetting = context.getString(R.string.hint_12);
 
             if (!(item instanceof IpSettingClient)) {
                 String currentValue = sharedPrefUtil.getString(item);
                 String showInfo;
                 if (TextUtils.isEmpty(currentValue)) {
-                    showInfo = "Default:" + String.valueOf(item.getDefaultValue());
+                    showInfo = String.format(formatOfDefaultSetting,
+                                             String.valueOf(item.getDefaultValue()));
                 } else {
                     showInfo = currentValue;
                 }
                 clientHolder.debugStates.setText(
-                        String.format("Current:%s", showInfo));
+                        String.format(formatOfCurrentSetting, showInfo));
             } else {
-                IPDbManager.IPEntity ipEntity = IPDbManager.getInstance(context).querySelected(item.getOptionsName());
+                IPDbManager.IPEntity ipEntity = IPDbManager.getInstance(context)
+                                                           .querySelected(item.getOptionsName());
 
                 clientHolder.debugStates.setText(
-                        String.format("Current:%s", ipEntity != null ? ipEntity.getIp() : "Default:" + ((IpSettingClient) item).getDefaultValue()));
+                        String.format(formatOfCurrentSetting, ipEntity != null ?
+                                                              ipEntity.getIp() :
+                                                              String.format(formatOfDefaultSetting,
+                                                                            ((IpSettingClient) item)
+                                                                                    .getDefaultValue())));
             }
         }
 
-        private class ClientHolder {
+        private static class ClientHolder {
             TextView debugOptionsName;
             TextView debugStates;
 
@@ -202,12 +218,5 @@ public class InitializeHomeActivity extends Activity implements View.OnClickList
             }
         }
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(LOG_TAG, "onDestroy");
-        setExisting(false);
     }
 }

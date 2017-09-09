@@ -3,7 +3,6 @@ package com.bian.debugbox.box;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.bian.debugbox.box.client.BooleanClient;
 import com.bian.debugbox.box.client.FloatClient;
@@ -33,7 +32,7 @@ class OptionsClientManager {
     }
 
     static void addClient(OptionsClient optionsClient) {
-        checkClientIllgal(optionsClient);
+        checkClientIllegal(optionsClient);
         clients.put(optionsClient.getOptionsName(), optionsClient);
     }
 
@@ -43,11 +42,11 @@ class OptionsClientManager {
         return clients.get(optionsName);
     }
 
-    private static void checkClientIllgal(OptionsClient optionsClient) {
+    private static void checkClientIllegal(OptionsClient optionsClient) {
         if (clients.containsKey(optionsClient.getOptionsName())) {
-            Log.e(InitializeUtil.LOG_TAG, "repeat options client");
+            L.e("repeat options client");
         }
-        if (TextUtils.isEmpty(optionsClient.getOptionsName())){
+        if (TextUtils.isEmpty(optionsClient.getOptionsName())) {
             throw new IllegalArgumentException("OptionsClient must have a name");
         }
     }
@@ -59,20 +58,20 @@ class OptionsClientManager {
                 try {
                     client.onResult(parseCallBackValue(context, client));
                 } catch (Exception e) {
-                    Log.e(InitializeUtil.LOG_TAG, "callback current value of(" + client.getOptionsName() + ") failed", e);
+                    L.e("callback current value of(" + client.getOptionsName() + ") failed\n"+ e.getMessage());
                 }
             } else {
                 IPDbManager.IPEntity ipEntity =
                         IPDbManager.getInstance(context).querySelected(client.getOptionsName());
                 ((IpSettingClient) client).onResult(
                         ipEntity != null ?
-                                ipEntity.getIp() :
-                                ((IpSettingClient) client).getDefaultValue());
+                        ipEntity.getIp() :
+                        ((IpSettingClient) client).getDefaultValue());
             }
         }
     }
 
-    private static Object parseCallBackValue(Context context, OptionsClient client) throws Exception {
+    private static Object parseCallBackValue(Context context, OptionsClient client) {
         SharedPrefUtil sharedPrefUtil = SharedPrefUtil.getInstance(context);
         String currentValue = sharedPrefUtil.getString(client);
 

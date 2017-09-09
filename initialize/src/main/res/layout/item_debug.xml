@@ -25,9 +25,8 @@
         android:layout_marginStart="15dp"
         android:ellipsize="marquee"
         android:gravity="center_vertical"
-        android:maxLength="30"
         android:layout_marginBottom="10dp"
-        android:singleLine="true"
         tools:ignore="RtlHardcoded"
-        tools:text="当前选中：13123123" />
+        tools:text="当前选中：13123123"
+        android:maxLines="1"/>
 </LinearLayout>

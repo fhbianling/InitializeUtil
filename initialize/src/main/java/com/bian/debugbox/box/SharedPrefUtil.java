@@ -10,11 +10,11 @@ import com.bian.debugbox.box.client.OptionsClient;
 class SharedPrefUtil {
     @SuppressLint("StaticFieldLeak")
     private static volatile SharedPrefUtil sInstance;
-    public static SharedPrefUtil getInstance(Context context){
+    static SharedPrefUtil getInstance(Context context){
         if(sInstance==null){
             synchronized(SharedPrefUtil.class){
                 if(sInstance==null){
-                    sInstance=new SharedPrefUtil(InitializeUtil.CONFIG_NAME,context.getApplicationContext());
+                    sInstance=new SharedPrefUtil(context.getApplicationContext());
                 }
             }
         }
@@ -25,10 +25,10 @@ class SharedPrefUtil {
         return sInstance;
     }
 
-    private SharedPreferences preference;
+    private final SharedPreferences preference;
 
-    private SharedPrefUtil(String preferenceName,Context context) {
-        preference = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
+    private SharedPrefUtil(Context context) {
+        preference = context.getSharedPreferences(InitializeUtil.CONFIG_NAME, Context.MODE_PRIVATE);
     }
 
     void putString(String key, String value) {

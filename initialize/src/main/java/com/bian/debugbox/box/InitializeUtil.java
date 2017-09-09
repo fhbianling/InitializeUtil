@@ -12,8 +12,6 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.bian.debugbox.box.client.BooleanClient;
 import com.bian.debugbox.box.client.FloatClient;
@@ -27,30 +25,27 @@ import com.bian.debugbox.box.client.StringClient;
  * date 2017/3/28 15:12
  * desc ${TODO}
  */
-
 @SuppressWarnings("unused")
 public class InitializeUtil {
     final static String CONFIG_NAME = "initialize";
-    final static String LOG_TAG = "InitializeUtil";
     private final static int REQUEST_CODE = 0x12;
     @SuppressLint("StaticFieldLeak")
-    private static Application application;
-    private static boolean debug = true;
-    private static boolean inflated = false;
+    private static Application sApplication;
+    private static boolean sDebug = true;
+    private static boolean sInflated = false;
     private static boolean sEnableValueCallBackWhenAppStart=true;
 
     public static void init(Application application) {
-        InitializeUtil.application = application;
+        InitializeUtil.sApplication = application;
         checkAppNull();
         ActivityLifeCycle activityLifeCycleCallBackImpl = new ActivityLifeCycle();
-        Log.i(LOG_TAG, "init");
         application.registerActivityLifecycleCallbacks(activityLifeCycleCallBackImpl);
     }
 
     @SuppressWarnings("WeakerAccess")
     public static void setDefaultIp(String clientName, String host, String port) {
         checkAppNull();
-        IPDbManager.getInstance(application.getApplicationContext()).setDefaultIp(clientName, host, port);
+        IPDbManager.getInstance(sApplication.getApplicationContext()).setDefaultIp(clientName, host, port);
     }
 
     public static void setDefaultIp(String clientName, String url) {
@@ -58,7 +53,7 @@ public class InitializeUtil {
         String host = InternalUtil.getHostFromUrl(url);
         String port = InternalUtil.getPortFromUrl(url);
         if (TextUtils.isEmpty(host) || TextUtils.isEmpty(port)) {
-            Log.e(LOG_TAG, "setDefaultIp(String url):parse url error");
+            L.e("setDefaultIp(String url):parse url error");
         } else {
             setDefaultIp(clientName, host, port);
         }
@@ -70,7 +65,8 @@ public class InitializeUtil {
 
     public static void setDebug(boolean debug) {
         checkAppNull();
-        InitializeUtil.debug = debug;
+        InitializeUtil.sDebug = debug;
+        L.setDEBUG(InitializeUtil.sDebug);
     }
 
     public static void addIpSettingClient(IpSettingClient ipSettingClient) {
@@ -94,7 +90,7 @@ public class InitializeUtil {
     }
 
     private static void checkAppNull() {
-        if (application == null) {
+        if (sApplication == null) {
             throw new UnsupportedOperationException("init failed:" + "didn't call InitializeUtil.init(...) method");
         }
     }
@@ -105,19 +101,20 @@ public class InitializeUtil {
     }
 
     private static void checkPermissionAndInflate(Activity activity) {
-        Log.d(LOG_TAG, "check permission of system alert window at:" + activity.getClass().getName());
+        L.d("check requested permission of util at:" + activity.getClass().getName());
 
         boolean hasPermission = isPermissionGranted(activity);
-        Log.d(LOG_TAG,"permission result:"+hasPermission);
+        L.d("permission result:"+hasPermission);
         if (hasPermission) {
             inflateButton(activity);
         } else {
+            L.d("inflate floating button failed");
             requestPermission(activity);
         }
     }
 
     private static void requestPermission(Activity activity) {
-        Log.d(LOG_TAG,"request permission");
+        L.d("request permission");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                     Uri.parse("package:" + activity.getPackageName()));
@@ -142,8 +139,8 @@ public class InitializeUtil {
     }
 
     private static void inflateButton(Context context) {
-        Log.d(LOG_TAG,"inflate floating button");
-        inflated = true;
+        L.d("inflate floating button success");
+        sInflated = true;
         FloatingButton.inflateButton(context);
         if (sEnableValueCallBackWhenAppStart){
             OptionsClientManager.callBackAllValue(context);
@@ -159,8 +156,8 @@ public class InitializeUtil {
 
     static void inflatedButtonProcess(Activity activity) {
         String simpleName = activity.getClass().getSimpleName();
-        Log.i(LOG_TAG, "onActivityCreated:" + simpleName);
-        if (inflated || !debug) return;
+        if (sInflated || !sDebug) return;
+        L.i("inflate InitializeUtil's floating button");
         checkPermissionAndInflate(activity);
     }
 }

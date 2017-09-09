@@ -6,7 +6,6 @@ import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 
-import static com.bian.debugbox.box.InitializeUtil.LOG_TAG;
 import static com.bian.debugbox.box.InternalUtil.getScreenWidth;
 import static com.bian.debugbox.box.InternalUtil.getStatusBarHeight;
 
@@ -27,7 +25,7 @@ import static com.bian.debugbox.box.InternalUtil.getStatusBarHeight;
 class FloatingButton implements View.OnTouchListener {
     @SuppressLint("StaticFieldLeak")
     private static volatile FloatingButton sInstance;
-    private static WindowManager.LayoutParams sLayoutParams;
+    private volatile static WindowManager.LayoutParams sLayoutParams;
     private int statusBarHeight, screenWidth;
     private View mView;
     private Context context;
@@ -46,11 +44,12 @@ class FloatingButton implements View.OnTouchListener {
         mLastPos.x = -1;
         scaledTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mView.setOnTouchListener(this);
-        mView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        mView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver
+                .OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                xOffSet =mView.getWidth()/2;
-                yOffSet =mView.getHeight()/2;
+                xOffSet = mView.getWidth() / 2;
+                yOffSet = mView.getHeight() / 2;
             }
         });
     }
@@ -67,14 +66,14 @@ class FloatingButton implements View.OnTouchListener {
     }
 
     static void setVisible(boolean visible) {
-        Log.d(LOG_TAG, "setVisible:" + visible);
         if (sInstance != null) {
             sInstance.getView().setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
         }
     }
 
     static void inflateButton(final Context context) {
-        WindowManager wm = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) context.getApplicationContext().getSystemService
+                (Context.WINDOW_SERVICE);
         WindowManager.LayoutParams layoutParams = getLayoutParams();
         FloatingButton button = FloatingButton.getInstance(context);
         final View inflate = button.getView();
@@ -84,18 +83,22 @@ class FloatingButton implements View.OnTouchListener {
     @NonNull
     private static WindowManager.LayoutParams getLayoutParams() {
         if (sLayoutParams == null) {
-            int typePhone;
-            if (Build.VERSION.SDK_INT > 18 && Build.VERSION.SDK_INT < 25) {
-                typePhone = WindowManager.LayoutParams.TYPE_TOAST;
-            } else {
-                typePhone = WindowManager.LayoutParams.TYPE_PHONE;
+            synchronized (FloatingButton.class) {
+                if (sLayoutParams == null) {
+                    int typePhone;
+                    if (Build.VERSION.SDK_INT > 18 && Build.VERSION.SDK_INT < 25) {
+                        typePhone = WindowManager.LayoutParams.TYPE_TOAST;
+                    } else {
+                        typePhone = WindowManager.LayoutParams.TYPE_PHONE;
+                    }
+                    sLayoutParams = new WindowManager.LayoutParams(
+                            typePhone, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+                    sLayoutParams.gravity = Gravity.TOP | Gravity.END;
+                    sLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                    sLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                    sLayoutParams.format = PixelFormat.RGBA_8888;
+                }
             }
-            sLayoutParams = new WindowManager.LayoutParams(
-                    typePhone, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-            sLayoutParams.gravity = Gravity.TOP | Gravity.END;
-            sLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-            sLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            sLayoutParams.format = PixelFormat.RGBA_8888;
         }
         return sLayoutParams;
     }
@@ -127,11 +130,11 @@ class FloatingButton implements View.OnTouchListener {
     }
 
     private int getMoveY() {
-        return mPos.y - statusBarHeight-yOffSet;
+        return mPos.y - statusBarHeight - yOffSet;
     }
 
     private int getMoveX() {
-        return screenWidth - mPos.x-xOffSet;
+        return screenWidth - mPos.x - xOffSet;
     }
 
     private void updateWindowPosition(int x, int y) {
@@ -162,6 +165,8 @@ class FloatingButton implements View.OnTouchListener {
                 } else {
                     updateWindowPosition(getMoveX(), getMoveY());
                 }
+                break;
+            default:
                 break;
         }
         return true;

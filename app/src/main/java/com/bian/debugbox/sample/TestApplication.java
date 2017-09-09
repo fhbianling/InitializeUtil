@@ -1,6 +1,7 @@
 package com.bian.debugbox.sample;
 
 import android.app.Application;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -9,6 +10,7 @@ import com.bian.debugbox.box.client.BooleanClient;
 import com.bian.debugbox.box.client.FloatClient;
 import com.bian.debugbox.box.client.IpSettingClient;
 import com.bian.debugbox.box.client.NumberClient;
+import com.bian.debugbox.box.client.StringClient;
 
 /**
  * author 边凌
@@ -106,7 +108,7 @@ public class TestApplication extends Application {
 
             @Override
             public Long getDefaultValue() {
-                return 2l;
+                return 2L;
             }
         });
         InitializeUtil.addNumberClient(new NumberClient() {
@@ -122,7 +124,23 @@ public class TestApplication extends Application {
 
             @Override
             public Long getDefaultValue() {
-                return 5l;
+                return 5L;
+            }
+        });
+        InitializeUtil.addStringClient(new StringClient() {
+            @Override
+            public String getOptionsName() {
+                return "String test";
+            }
+
+            @Override
+            public void onResult(@Nullable String result) {
+                Toast.makeText(TestApplication.this, "string test:"+result, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public String getDefaultValue() {
+                return "string test";
             }
         });
     }

@@ -1,5 +1,18 @@
 <resources>
     <string name="app_name">初始化设置</string>
-    <string name="hint_itemip_1">删除</string>
-    <string name="hint">Init</string>
+    <string name="hint_itemIp_1">删除</string>
+    <string name="hint_0">Init</string>
+    <string name="hint_1">初始化设置</string>
+    <string name="hint_2">完成</string>
+    <string name="hint_3">完成</string>
+    <string name="hint_4">当前选中IP：</string>
+    <string name="hint_5">完成</string>
+    <string name="hint_6">添加</string>
+    <string name="hint_7">错误格式的ip!</string>
+    <string name="hint_8">当前IP:%s</string>
+    <string name="hint_9">输入点什么</string>
+    <string name="hint_10">错误的输入</string>
+    <string name="hint_11">当前:%s</string>
+    <string name="hint_12">%s（默认值）</string>
+    <string name="hint_13">设置:%s</string>
 </resources>
