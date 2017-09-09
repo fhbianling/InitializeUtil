@@ -58,7 +58,7 @@ More clients:FloatClient,IpSettingClient,NumberClient and StringClient.
 
 Call `.init(Application application)` at first.
 
-If targetApi is between 18 and 25,it is necessary to call `onPermissionResult(Activity activity)` at your `category.LAUNCHER` activity.
+If targetApi is smaller than 18 or larger than 25,it is necessary to call `onPermissionResult(Activity activity)` at your `category.LAUNCHER` activity.
 ## Screenshots ##
 ![](https://i.imgur.com/ON12cWj.png)
 ![](https://i.imgur.com/og6VkV4.png)
